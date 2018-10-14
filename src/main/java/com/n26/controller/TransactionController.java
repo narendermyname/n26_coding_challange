@@ -7,13 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.n26.dto.TransactionData;
 import com.n26.dto.TransactionRequest;
-import com.n26.parser.exception.ParseException;
+import com.n26.exception.ParseException;
+import com.n26.exception.TransactionException;
 import com.n26.service.TransactionService;
 import com.n26.validator.TransactionDataValidator;
 
@@ -37,15 +39,14 @@ public class TransactionController {
 	public ResponseEntity<?> createTransaction(@RequestBody TransactionRequest transactionRequest)
 			throws ParseException {
 		TransactionData trnData = trnDataParser.praseRequest(transactionRequest);
-
-		HttpStatus httpStatus = trnDataValidator.validateAndReturnStatus(trnData);
-
-		if (HttpStatus.CREATED != httpStatus) {
-			return new ResponseEntity<>(httpStatus);
+		try {
+			trnDataValidator.validate(trnData);
+		}catch(TransactionException ex) {
+			return new ResponseEntity<>(ex.getStatus());
 		}
 		trnService.add(trnData);
 
-		return new ResponseEntity<>(httpStatus);
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
 	@DeleteMapping

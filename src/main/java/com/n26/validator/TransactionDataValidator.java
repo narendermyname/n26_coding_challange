@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.n26.data.store.TransactionDataStore;
 import com.n26.dto.TransactionData;
+import com.n26.exception.TransactionException;
 
 /**
  * @author natanwar
@@ -21,17 +22,15 @@ import com.n26.dto.TransactionData;
 @Component
 public class TransactionDataValidator {
 
-	public HttpStatus validateAndReturnStatus(TransactionData trn) {
+	public void validate(TransactionData trn) {
 		ZonedDateTime currentTime = Instant.now().atZone(ZoneId.of(TransactionDataStore.UTC_TIMEZONE));
-
 		if (isTrnDateFutureDate(trn, currentTime)) {
-			return HttpStatus.UNPROCESSABLE_ENTITY;
+			throw new TransactionException(HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 
 		if (isTrnOlderThan60Second(trn, currentTime)) {
-			return HttpStatus.NO_CONTENT;
+			throw new TransactionException(HttpStatus.NO_CONTENT);
 		}
-		return HttpStatus.CREATED;
 	}
 
 	private boolean isTrnDateFutureDate(TransactionData trn, ZonedDateTime currentDateTime) {

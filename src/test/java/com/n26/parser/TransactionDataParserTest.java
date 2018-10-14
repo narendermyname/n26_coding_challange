@@ -12,8 +12,8 @@ import org.junit.Test;
 
 import com.n26.dto.TransactionData;
 import com.n26.dto.TransactionRequest;
+import com.n26.exception.ParseException;
 import com.n26.parser.TransactionDataParser;
-import com.n26.parser.exception.ParseException;
 
 /**
  * @author natanwar

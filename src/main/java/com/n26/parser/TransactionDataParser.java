@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.n26.dto.TransactionData;
 import com.n26.dto.TransactionRequest;
-import com.n26.parser.exception.ParseException;
+import com.n26.exception.ParseException;
 
 /**
  * @author natanwar
